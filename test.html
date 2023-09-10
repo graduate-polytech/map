@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>내 위치 표시</title>
+</head>
+<body>
+    <h1>내 위치</h1>
+    <div id="map" style="width: 100%; height: 800px;"></div>
+
+    <script>
+        // API 키를 여기에 입력합니다.
+        const apiKey = 'AIzaSyCFWttU33_ZQvbz5cU1vdkdtcyPL2Tr53U';
+
+        // 내 위치 표시를 위한 함수
+        function showMyLocation() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+
+                    // Google Maps를 사용하여 위치 표시
+                    const map = new google.maps.Map(document.getElementById("map"), {
+                        center: { lat, lng },
+                        zoom: 15
+                    });
+
+                    const marker = new google.maps.Marker({
+                        position: { lat, lng },
+                        map: map,
+                        title: "내 위치"
+                    });
+                });
+            } else {
+                alert("내 위치를 가져올 수 없습니다.");
+            }
+        }
+
+        // 페이지 로드 시 내 위치 표시 함수 호출
+        showMyLocation();
+    </script>
+
+    <!-- Maps JavaScript API 로드 -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCFWttU33_ZQvbz5cU1vdkdtcyPL2Tr53U&callback=showMyLocation" async defer></script>
+</body>
+</html>
