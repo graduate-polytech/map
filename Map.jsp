@@ -240,14 +240,17 @@ CinemaDataAccess2 cinemaDataAccess2 = CinemaDataAccess2.createInstance();
             	var userMarkerPosition = userMarker.getPosition();
             	var distance = google.maps.geometry.spherical.computeDistanceBetween(markerPosition, userMarkerPosition);
 
-        		var content = '<h1>' + name + '</h1>' + '<p>주소: ' + address + '</p>';
+        		var content =
+        			'<div style="width: 200px;">' +
+        			'<h1 style="font-size: 20px; margin: 5px 0;">' + name + '</h1>' +
+        			'<p style="font-size: 15px; margin: 5px 0;">주소: ' + address + '</p>';
             	if (tel) {
-                	content += '<p>전화번호: ' + tel + '</p>';
+                	content += '<p style="font-size: 15px; margin: 5px 0;">전화번호: ' + tel + '</p>';
             	}
             	if (wep) {
-                	content += '<p>웹사이트: <a href="' + wep + '" target="_blank">' + wep + '</a></p>';
+                	content += '<p style="font-size: 15px; margin: 5px 0;">웹사이트: <a href="' + wep + '" target="_blank">' + wep + '</a></p>';
             	}
-            	content += '<p>현재 나와의 거리: ' + (distance / 1000).toFixed(2) + ' km</p>';
+            	content += '<p style="font-size: 15px; margin: 5px 0;">현재 나와의 거리: ' + (distance / 1000).toFixed(2) + ' km</p>';
             	// InfoWindow에 정보를 표시합니다.
             	infoWindow.setContent(content);
             	// InfoWindow를 현재 클릭한 마커의 위치에 열고 표시합니다.
@@ -287,8 +290,10 @@ CinemaDataAccess2 cinemaDataAccess2 = CinemaDataAccess2.createInstance();
         	}
     	}
 	}
+	
 	function Search() {
 	    var searchKeyword = document.getElementById("markerSearch").value.toLowerCase();
+	    var visibleMarkers = []; // 검색 결과로 표시된 마커들을 저장할 배열
 	    for (var i = 0; i < markers.length; i++) {
 	        var marker = markers[i];
 	        var markerName = marker.get("name") || '';
@@ -306,23 +311,30 @@ CinemaDataAccess2 cinemaDataAccess2 = CinemaDataAccess2.createInstance();
 	            marker.setVisible(false);
 	        }
 	    }
+	    fitMapBounds(markers);
+	    closeInfoWindow();
 	}
+	
 	function clearSearch() {
 	    document.getElementById("markerSearch").value = "";
 	    Search();
 	}
-	function filterMarkers(area) {
-	    for (var i = 0; i < markers.length; i++) {
-	        var marker = markers[i];
-	        var markerArea1 = marker.get("area1") || '';
-	        if (markerArea1 === area) {
-	            marker.setVisible(true);
-	        } else {
-	            marker.setVisible(false);
-	        }
+	Search();
+	function fitMapBounds(markers) {
+	    var bounds = new google.maps.LatLngBounds();
+	    
+	    var visibleMarkers = markers.filter(function (marker) {
+	        return marker.getVisible();
+	    });
+
+	    for (var i = 0; i < visibleMarkers.length; i++) {
+	        bounds.extend(visibleMarkers[i].getPosition());
 	    }
+
+	    map.fitBounds(bounds);
 	}
 
+	
 </script>
 </body>
 </html>
